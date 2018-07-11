@@ -1,0 +1,5 @@
+python3-libfolding (1.0-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- asr <asr@PORT-56.irisa.fr>  Tue, 10 Jul 2018 16:47:20 +0200

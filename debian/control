@@ -1,0 +1,17 @@
+Source: python3-libfolding
+Section: unknown
+Priority: optional
+Maintainer: asr <alban.siffer@gmail.com>
+Build-Depends: debhelper (>= 10), dh-python, python-all, python-setuptools, python3-all, python3-setuptools
+Standards-Version: 4.1.2
+Homepage: https://github.com/asiffer/python3-libfolding
+X-Python3-Version: >= 3.2
+
+Package: python3-libfolding
+Architecture: all
+Depends: libfolding (>=1.0), ${python3:Depends}, ${misc:Depends}
+Suggests:
+Description: Python3 bindings to libfolding 
+  libfolding aims to detect modes in multivariate data
+
+
