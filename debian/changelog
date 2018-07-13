@@ -1,5 +1,12 @@
-python3-libfolding (1.0-1) unstable; urgency=medium
+python3-libfolding (1.1) UNRELEASED; urgency=medium
+
+  * Team upload.
+  * Ready to use the new C++ library
+
+ -- Alban Siffer <alban.siffer@gmail.com>  Fri, 13 Jul 2018 15:50:10 +0200
+
+python3-libfolding (1.0) unstable; urgency=medium
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
 
- -- asr <asr@PORT-56.irisa.fr>  Tue, 10 Jul 2018 16:47:20 +0200
+ -- Alban Siffer <alban.siffer@gmail.com> Tue, 10 Jul 2018 16:47:20 +0200

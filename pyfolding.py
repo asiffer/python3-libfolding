@@ -18,9 +18,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 """
 
 from ctypes import CDLL, POINTER, byref
-from ctypes import c_double, c_int, c_bool, c_void_p, c_size_t
-from math import log, sqrt
-from scipy.optimize import brentq
+from ctypes import c_double, c_int, c_bool, c_void_p, c_size_t, c_long
+from math import log, sqrt, exp
+from scipy.optimize import brenth, bisect
 from numpy import float64
 import numpy as np
 
@@ -31,12 +31,12 @@ PVAL_C = 2.0287
 ND_POINTER_1 = np.ctypeslib.ndpointer(dtype=float64, ndim=1, flags='CONTIGUOUS')
 ND_POINTER_2 = np.ctypeslib.ndpointer(dtype=float64, ndim=2, flags='CONTIGUOUS')
 
-LIBFOLDING = CDLL('libfolding.so')
+LIBFOLDING = CDLL('./libfolding.so')
 
 LIBFOLDING.sf_new.argtypes = [c_size_t]
 LIBFOLDING.sf_new.restype = c_void_p
 
-LIBFOLDING.sf_update.argtypes = [c_void_p, ND_POINTER_1, c_int, c_bool, c_bool]
+LIBFOLDING.sf_update.argtypes = [c_void_p, ND_POINTER_1, c_size_t, c_bool, c_bool]
 
 LIBFOLDING.sf_is_initialized.argtypes = [c_void_p]
 LIBFOLDING.sf_is_initialized.restypes = [c_bool]
@@ -53,6 +53,11 @@ LIBFOLDING.sf_cov.argtypes = [c_void_p, ND_POINTER_2]
 LIBFOLDING.sf_s2star.argtypes = [c_void_p, ND_POINTER_1]
 
 LIBFOLDING.sf_dump.argtypes = [c_void_p, ND_POINTER_2]
+
+# (double * array_ptr, size_t n, size_t d, bool * unimodal, double * pval, double * Phi, int * usec)
+LIBFOLDING.batch_folding_test.argtypes = [ND_POINTER_2, c_size_t, c_size_t,
+                                          POINTER(c_bool), POINTER(c_double),
+                                          POINTER(c_double), POINTER(c_long)]
 
 
 class StreamFolding(object):
@@ -231,10 +236,10 @@ def decision_bound(p_value, n, d):
     d: int
         the dimension
     """
-    return PVAL_A * (p - PVAL_B * log(1 - p)) * (PVAL_C + log(d)) / sqrt(n)
+    return PVAL_A * (p_value - PVAL_B * log(1 - p_value)) * (PVAL_C + log(d)) / sqrt(n)
 
 
-def p_value(phi, n, d):
+def p_value(phi, n, d, e=1e-16):
     """
     Compute the p-value of a test
 
@@ -248,13 +253,18 @@ def p_value(phi, n, d):
     d: int
         the dimension
     """
-    obj_fun = lambda p: abs(phi - 1) - decision_bound(p, n, d)
-    return brentq(obj_fun, 0., 1.)
+    try:
+        obj_fun = lambda p: (abs(phi - 1.) - decision_bound(1 - p, n, d))
+        p_val = brenth(obj_fun, 0., 1.)
+    except:
+
+        p_val = exp(-abs(phi - 1.) * sqrt(n) / (PVAL_C + log(d)))
+    return p_val
 
 
 def batch_folding_test(X):
     """
-    Perform statically the folding test of unimodality
+    Perform statically the folding test of unimodality (pure python)
 
     Parameters
     ----------
@@ -262,7 +272,12 @@ def batch_folding_test(X):
     X: numpy.ndarray
         a d by n matrix (n observations in dimension d)
     """
-    n, p = X.shape
+    try:
+        n, p = X.shape
+    except:
+        X = X.reshape(1, len(X))
+        n, p = X.shape
+
     if n > p:  # if lines are observations, we transpose it
         X = X.T
         dim = p
@@ -277,8 +292,57 @@ def batch_folding_test(X):
     cov_norm = np.cov(X, X_square_norm)[:-1, -1].reshape(-1, 1)  # cov(X,|X|²)
     pivot = 0.5 * np.linalg.solve(mat_cov, cov_norm)  # 0.5 * cov(X)^{-1} * cov(X,|X|²)
     X_reduced = np.sqrt(np.power(X - pivot, 2).sum(axis=0))  # |X-s*|²
-    phi = pow(1. + dim, 2) * X_reduced.var() / trace
+    phi = pow(1. + dim, 2) * X_reduced.var(ddof=1) / trace
     unimodal = (phi >= 1.)
     return unimodal, p_value(phi, n_obs, dim), phi
 
 
+def batch_folding_test_cpp(X):
+    """
+    Perform statically the folding test of unimodality (using c++ library)
+
+    Parameters
+    ----------
+
+    X: numpy.ndarray
+        d by n matrix (n observations in dimension d)
+    """
+    try:
+        n, p = X.shape
+    except:
+        X = X.reshape(1, len(X))
+        n, p = X.shape
+
+    if n > p:  # if lines are observations, we transpose it
+        X = X.T
+        dim = p
+        n_obs = n
+    else:
+        dim = n
+        n_obs = p
+
+    unimodal = c_bool(True)
+    p_val = c_double(0.)
+    phi = c_double(0.)
+    time = c_long(0)
+    LIBFOLDING.batch_folding_test(X, dim, n_obs, byref(unimodal),
+                                  byref(p_val), byref(phi), byref(time))
+    return unimodal.value, p_val.value, phi.value, time.value
+
+
+N = 20000
+X = np.random.normal(0, 1, N)
+print(batch_folding_test_cpp(X))
+print(batch_folding_test(X))
+
+sf = StreamFolding(N)
+for x in X.reshape(-1, 1):
+    sf.update(x)
+
+print(sf.folding_test())
+
+N = 200000
+X = np.random.multivariate_normal([0, 0], [[1, 0.5], [0.5, 1]], N).T
+X = np.random.normal(0, 1, (2, N))
+print(batch_folding_test(X))
+print(batch_folding_test_cpp(X))
