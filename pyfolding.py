@@ -31,7 +31,7 @@ PVAL_C = 2.0287
 ND_POINTER_1 = np.ctypeslib.ndpointer(dtype=float64, ndim=1, flags='CONTIGUOUS')
 ND_POINTER_2 = np.ctypeslib.ndpointer(dtype=float64, ndim=2, flags='CONTIGUOUS')
 
-LIBFOLDING = CDLL('./libfolding.so')
+LIBFOLDING = CDLL('libfolding.so')
 
 LIBFOLDING.sf_new.argtypes = [c_size_t]
 LIBFOLDING.sf_new.restype = c_void_p

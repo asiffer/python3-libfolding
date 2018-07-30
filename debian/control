@@ -9,7 +9,7 @@ X-Python3-Version: >= 3.2
 
 Package: python3-libfolding
 Architecture: all
-Depends: libfolding (>=1.1), ${python3:Depends}, ${misc:Depends}
+Depends: libfolding, ${python3:Depends}, ${misc:Depends}
 Suggests:
 Description: Python3 bindings to libfolding 
   libfolding aims to detect modes in multivariate data
