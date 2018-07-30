@@ -1,5 +1,5 @@
 Source: python3-libfolding
-Section: unknown
+Section: python
 Priority: optional
 Maintainer: Alban Siffer <alban.siffer@gmail.com>
 Build-Depends: debhelper (>= 10), dh-python, python-all, python-setuptools, python3-all, python3-setuptools
