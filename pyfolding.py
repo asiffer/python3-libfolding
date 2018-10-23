@@ -262,6 +262,37 @@ def p_value(phi, n, d, e=1e-16):
     return p_val
 
 
+def folding_pivot(X):
+    """
+    Compute the folding pivot
+
+    Parameters
+    ----------
+
+    X: numpy.ndarray
+        d by n matrix (n observations in dimension d)
+    
+    Returns
+    -------
+    p: numpy.ndarray
+        d by 1 vector
+    """
+    try:
+        n, p = X.shape
+    except:
+        X = X.reshape(1, len(X))
+        n, p = X.shape
+
+    if n > p:  # if lines are observations, we transpose it
+        X = X.T
+
+    X_square_norm = (X * X).sum(axis=0)  # |X|²
+    mat_cov = np.matrix(np.cov(X))  # cov(X)
+    cov_norm = np.cov(X, X_square_norm)[:-1, -1].reshape(-1, 1)  # cov(X,|X|²)
+    return 0.5 * np.linalg.solve(mat_cov, cov_norm)  # 0.5 * cov(X)^{-1} * cov(X,|X|²)
+
+
+
 def batch_folding_test(X):
     """
     Perform statically the folding test of unimodality (pure python)
@@ -291,10 +322,54 @@ def batch_folding_test(X):
     trace = np.trace(mat_cov)  # Tr(cov(X))
     cov_norm = np.cov(X, X_square_norm)[:-1, -1].reshape(-1, 1)  # cov(X,|X|²)
     pivot = 0.5 * np.linalg.solve(mat_cov, cov_norm)  # 0.5 * cov(X)^{-1} * cov(X,|X|²)
-    X_reduced = np.sqrt(np.power(X - pivot, 2).sum(axis=0))  # |X-s*|²
+    X_reduced = np.sqrt(np.power(X - pivot, 2).sum(axis=0))  # |X-s*|
     phi = pow(1. + dim, 2) * X_reduced.var(ddof=1) / trace
     unimodal = (phi >= 1.)
     return unimodal, p_value(phi, n_obs, dim), phi
+
+
+def batch_folding_test_robust(X, depth=3):
+    """
+    Perform statically the folding test of unimodality (pure python) with
+    a robust procedure.
+
+    Parameters
+    ----------
+
+    X: numpy.ndarray
+        a d by n matrix (n observations in dimension d)
+    depth: int
+        number of iterations to confirm the unimodality character
+    """
+    try:
+        n, p = X.shape
+    except:
+        X = X.reshape(1, len(X))
+        n, p = X.shape
+
+    if n > p:  # if lines are observations, we transpose it
+        X = X.T
+        dim = p
+        n_obs = n
+    else:
+        dim = n
+        n_obs = p
+
+    X_square_norm = (X * X).sum(axis=0)  # |X|²
+    mat_cov = np.matrix(np.cov(X))  # cov(X)
+    trace = np.trace(mat_cov)  # Tr(cov(X))
+    cov_norm = np.cov(X, X_square_norm)[:-1, -1].reshape(-1, 1)  # cov(X,|X|²)
+    pivot = 0.5 * np.linalg.solve(mat_cov, cov_norm)  # 0.5 * cov(X)^{-1} * cov(X,|X|²)
+#    X_reduced = np.sqrt(np.power(X - pivot, 2).sum(axis=0))  # |X-s*|
+    X_reduced = np.linalg.norm(X-pivot, axis=0)
+    phi = pow(1. + dim, 2) * X_reduced.var(ddof=1) / trace
+    unimodal = (phi >= 1.)
+    if (not unimodal) or (depth == 1):
+        return unimodal, p_value(phi, n_obs, dim), phi
+    else:
+        return batch_folding_test_robust(X_reduced, depth-1)
+
+
 
 
 def batch_folding_test_cpp(X):
