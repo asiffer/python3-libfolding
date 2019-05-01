@@ -1,0 +1,11 @@
+Package: python3-libfolding
+Version: 1.1
+Architecture: all
+Maintainer: Alban Siffer <alban.siffer@irisa.fr>
+Installed-Size: 29
+Depends: libfolding
+Section: python
+Priority: optional
+Homepage: https://github.com/asiffer/python3-libfolding
+Description: Python3 bindings to libfolding
+  libfolding aims to assess unimodality in multivariate data

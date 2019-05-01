@@ -1,0 +1,7 @@
+abe38ac94e26c4e53f6a9371fb4af119  usr/lib/python3/dist-packages/pyfolding/__init__.py
+8496f390d8fd738a28b5142c015ec523  usr/lib/python3/dist-packages/pyfolding/batch.py
+2b81576542f9f423c36111472e69db25  usr/lib/python3/dist-packages/pyfolding/libfolding.py
+c6618266dc96bdaccb880c7dd8287538  usr/lib/python3/dist-packages/pyfolding/pvalues.py
+8616ed03d886611f914e75ccb26936bd  usr/lib/python3/dist-packages/pyfolding/results.py
+4503181ed318a2fc8a7ef882a578c147  usr/lib/python3/dist-packages/pyfolding/stream.py
+e8a964612a8d81c49695b187e31d412d  usr/share/doc/python3-libfolding/changelog.gz
