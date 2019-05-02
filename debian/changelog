@@ -25,7 +25,7 @@ python3-libfolding (1.1.2) cosmic; urgency=medium
   * change message formatting
   * new readme
 
- -- asr <asr@PORT-120>  Thu, 02 May 2019 18:33:01 +0200
+ -- Alban Siffer <alban.siffer@irisa.fr>  Thu, 02 May 2019 18:35:49 +0200
 
 python3-libfolding (1.0) unstable; urgency=medium
 
