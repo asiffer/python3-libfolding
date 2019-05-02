@@ -37,6 +37,9 @@ def ftu(X: Matrix) -> Results:
     """
     ftu_results = FTUResults()
     t0 = time.time()
+
+    if X.ndim == 1:
+        X = X.reshape(-1, 1)
     ftu_results.n_obs, ftu_results.dim = X.shape
     ftu_results.cov = np.cov(X.T).reshape(ftu_results.dim,
                                           ftu_results.dim)  # cov(X)
@@ -75,10 +78,12 @@ def ftu_cpp(X: Matrix) -> Results:
         n by d matrix (n observations in dimension d)
     """
     ftu_results = FTUResults()
+    if X.ndim == 1:
+        X = X.reshape(-1, 1)
     ftu_results.n_obs, ftu_results.dim = X.shape
     ftu_results.cov = np.cov(X.T).reshape(ftu_results.dim,
                                           ftu_results.dim)  # cov(X)
-    X = np.ascontiguousarray(X.T)
+    X = np.ascontiguousarray(X)
     # Preparing C++ call
     unimodal = c_bool(True)
     p_val = c_double(0.)

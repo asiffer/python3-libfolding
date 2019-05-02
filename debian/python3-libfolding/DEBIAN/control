@@ -2,7 +2,7 @@ Package: python3-libfolding
 Version: 1.1
 Architecture: all
 Maintainer: Alban Siffer <alban.siffer@irisa.fr>
-Installed-Size: 29
+Installed-Size: 46
 Depends: libfolding
 Section: python
 Priority: optional

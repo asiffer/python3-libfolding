@@ -1,4 +1,4 @@
-python3-libfolding (1.1) UNRELEASED; urgency=medium
+python3-libfolding (1.1.2) cosmic; urgency=medium
 
   [ Alban Siffer ]
   * Team upload.
@@ -12,8 +12,20 @@ python3-libfolding (1.1) UNRELEASED; urgency=medium
 
   [ Alban Siffer ]
   * add robust procedure
+  * fix batch cpp -> do not transpose + setup.py
+  * test on batch FTU
+  * add example moving clusters
+  * add a figure
+  * change message formatting
+  * new readme
+  * fix batch cpp -> do not transpose + setup.py
+  * test on batch FTU
+  * add example moving clusters
+  * add a figure
+  * change message formatting
+  * new readme
 
- -- Alban Siffer <alban.siffer@irisa.fr>  Wed, 01 May 2019 16:23:43 +0200
+ -- asr <asr@PORT-120>  Thu, 02 May 2019 18:33:01 +0200
 
 python3-libfolding (1.0) unstable; urgency=medium
 

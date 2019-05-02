@@ -197,10 +197,10 @@ class StreamFolding(object):
         ftu_results = FTUResults()
         ftu_results.folding_pivot = self.folding_pivot()
         ftu_results.cov = self.cov()
-        ftu_results.folding_statistics = phi.values
+        ftu_results.folding_statistics = phi.value
         ftu_results.folding_ratio = ftu_results.folding_statistics / pow(1 + self._dim, 2)
         ftu_results.folded_variance = ftu_results.folding_ratio * np.trace(ftu_results.cov)
-        ftu_results.p_value = p_val
-        ftu_results.message = ''
+        ftu_results.p_value = p_val.value
+        ftu_results.message = ""
         ftu_results.time = t1 - t0
         return ftu_results
