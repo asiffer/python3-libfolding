@@ -43,7 +43,7 @@ class FTUResults:
            folding pivot: {}
                  p-value: {:.9f}
                     time: {:.9f}
-                 message: {:s}
+                 message: {}
         """.format(self.n_obs,
                    self.dim,
                    self.folding_statistics,
@@ -52,7 +52,7 @@ class FTUResults:
                    self.folding_pivot,
                    self.p_value,
                    self.time,
-                   self.message
+                   self.message,
                    )
         return s
 
