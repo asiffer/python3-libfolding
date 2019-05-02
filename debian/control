@@ -2,14 +2,14 @@ Source: python3-libfolding
 Section: python
 Priority: optional
 Maintainer: Alban Siffer <alban.siffer@irisa.fr>
-Build-Depends: debhelper (>= 10), libfolding, python3-all, python3-setuptools, python3-numpy, python3-sklearn
+Build-Depends: debhelper (>= 10), dh-python, python3-all, python3-setuptools
 Standards-Version: 4.1.2
 Homepage: https://github.com/asiffer/python3-libfolding
 X-Python3-Version: >= 3.2
 
 Package: python3-libfolding
 Architecture: all
-Depends: libfolding, ${misc:Depends}
+Depends: libfolding, ${python3:Depends}, ${misc:Depends}
 Suggests:
 Description: Python3 bindings to libfolding 
   libfolding aims to assess unimodality in multivariate data
