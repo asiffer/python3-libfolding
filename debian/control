@@ -11,7 +11,7 @@ Package: python3-libfolding
 Architecture: all
 Depends: libfolding, ${python3:Depends}, ${misc:Depends}
 Suggests:
-Description: Python3 bindings to libfolding 
+Description: Python3 bindings to libfolding
   libfolding aims to assess unimodality in multivariate data
 
 
